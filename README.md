@@ -1,1 +1,1 @@
-# TODO: CRUD users, items, shopping list 
+# TODO: CRUD users, items, shopping list, adding contributors
