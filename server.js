@@ -1,16 +1,17 @@
 require('dotenv').config()
 
-
 const express = require('express')
 const app = express()
 const { ROLE, users, projects } = require('./data')
 const { authUser, authRole } = require('./basicAuth')
 const projectRouter = require('./routes/projects')
+const listsRouter = require('./routes/lists')
 const jwt = require('jsonwebtoken')
 
 app.use(express.json())
 app.use(setUser)
 app.use('/projects', projectRouter)
+app.use('/lists', listsRouter)
 
 app.get('/', (req, res) => {
   res.send('Home Page')
