@@ -4,7 +4,7 @@ const router = express.Router()
 const { projects } = require('../data')
 const { authUser } = require('../basicAuth')
 
-// Getting a list
+// Getting all lists
 router.get('/' ,async (req,res)=>{
   try {
 
@@ -13,6 +13,11 @@ router.get('/' ,async (req,res)=>{
   } catch (err){
     res.status(500).json({ message: err.message})
   }
+})
+
+//Getting a list
+router.get('/:listId' ,getList, (req,res)=>{
+  res.send(res.list.shoppingListName)
 })
 
 // POST = CREATE a list
@@ -66,13 +71,29 @@ router.post('/', async (req, res) => {
 
 
 // Updating a list 
-router.patch('/' ,(req,res)=>{
+router.patch('/:listId' ,(req,res)=>{
   res.json('router.put/lists')
 })
 
 // Deleting a list
  router.delete('/:listId' ,(req,res)=>{
   res.json('router.delete/lists')
+  
 })
+
+async function getList(req, res, next){
+ let list
+ try{
+  list = await List.findById(req.params.listId)
+  console.log("req.params.listId", req.params.listId)
+  if (list == null){
+    return res.status(404).json({message: "Cannot find list"})
+  }
+ }catch{
+    return res.status(500).json({message: err.message})
+ } 
+ res.list = list
+ next()
+}
 
 module.exports = router
