@@ -16,8 +16,8 @@ router.get('/' ,async (req,res)=>{
 })
 
 //Getting a list
-router.get('/:listId' ,getList, (req,res)=>{
-  res.send(res.list.shoppingListName)
+router.get('/:id' ,getList,async (req,res)=>{
+  res.json(res.list.shoppingListName)
 })
 
 // POST = CREATE a list
@@ -84,10 +84,10 @@ router.patch('/:listId' ,(req,res)=>{
 async function getList(req, res, next){
  let list
  try{
-  list = await List.findById(req.params.listId)
-  console.log("req.params.listId", req.params.listId)
+  list = await List.findById(req.params.id)
+  console.log("list:",list, "req.params.id", req.params.id)
   if (list == null){
-    return res.status(404).json({message: "Cannot find list"})
+    return res.status(400).json({message: "Cannot find list"})
   }
  }catch{
     return res.status(500).json({message: err.message})
