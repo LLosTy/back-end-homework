@@ -27,6 +27,7 @@ app.get('/', (req, res) => {
 })
 
 app.get('/posts',authenticateToken, (req, res) => {
+  console.log("/posts // ",req.user)
   console.log(projects[req.user-1].id)
   console.log(req.user)
   res.json(projects.filter(proj => proj.userId == req.user))

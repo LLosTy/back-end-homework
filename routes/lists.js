@@ -9,7 +9,6 @@ router.get('/' ,async (req,res)=>{
   try {
 
     const lists = await List.find()
-    res.json(lists)
   } catch (err){
     res.status(500).json({ message: err.message})
   }
