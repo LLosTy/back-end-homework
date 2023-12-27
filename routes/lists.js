@@ -2,13 +2,15 @@ const List = require('../models/list')
 const express = require('express')
 const router = express.Router()
 const { projects } = require('../data')
-const { authUser } = require('../basicAuth')
+const { authUser,authenticateToken } = require('../basicAuth')
+
 
 // Getting all lists
 router.get('/' ,async (req,res)=>{
   try {
 
     const lists = await List.find()
+    res.json(lists)
   } catch (err){
     res.status(500).json({ message: err.message})
   }
@@ -20,7 +22,8 @@ router.get('/:listId' ,getList,async (req,res)=>{
 })
 
 // POST = CREATE a list
-router.post('/', async (req, res) => {
+router.post('/',authenticateToken, async (req, res) => {
+  console.log(req.user)
   try {
     // Create a new List object
     const list = new List({
@@ -58,6 +61,13 @@ router.post('/', async (req, res) => {
 
         list.shoppingListMembers.push(newMember);
       });
+    }
+    else{
+      const newMember = {
+        shoppingListMemberName: req.user,
+        shoppingListMemberIsOwner: true
+      }
+      list.shoppingListMembers.push(newMember)
     }
 
     // Save the list to the database

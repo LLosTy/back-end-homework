@@ -3,7 +3,7 @@ require('dotenv').config()
 const express = require('express')
 const app = express()
 const { ROLE, users, projects } = require('./data')
-const { authUser, authRole } = require('./basicAuth')
+const { authUser, authRole,authenticateToken } = require('./basicAuth')
 const projectRouter = require('./routes/projects')
 const listsRouter = require('./routes/lists')
 const jwt = require('jsonwebtoken')
@@ -27,6 +27,8 @@ app.get('/', (req, res) => {
 })
 
 app.get('/posts',authenticateToken, (req, res) => {
+  console.log("username in get posts:", authenticateToken.username)
+  console.log("REQUEST:", req)
   console.log("/posts // ",req.user)
   console.log(projects[req.user-1].id)
   console.log(req.user)
@@ -59,18 +61,5 @@ function setUser(req, res, next) {
 }
 
 
-function authenticateToken(req, res, next){
-  console.log("start of authenticateToken",req.body.username)
-  const authHeader = req.headers['authorization']
-  const token = authHeader && authHeader.split(' ')[1]
-  if (token == null) return res.sendStatus(401)
-  //MAYBE CHANGE "USERNAME" cause it's supossed to be the serialized object, which could mean that i need the object from my data.js file
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, username)=> {
-    if(err) return res.sendStatus(403)
-    req.user = username
-    console.log(req.user, "username:", username)
-    next()
-  })
-}
 
 app.listen(3000)
