@@ -6,7 +6,7 @@ const { authUser,authenticateToken } = require('../basicAuth')
 
 
 // Getting all lists
-router.get('/' ,async (req,res)=>{
+router.get('/' ,authenticateToken,getList(false), async (req,res)=>{
   try {
 
     const lists = await List.find()
@@ -17,7 +17,7 @@ router.get('/' ,async (req,res)=>{
 })
 
 //Getting a list
-router.get('/:listId' ,getList,async (req,res)=>{
+router.get('/:listId' ,authenticateToken,getList(false),async (req,res)=>{
   res.json(res.list)
 })
 
@@ -80,7 +80,7 @@ router.post('/',authenticateToken, async (req, res) => {
 
 
 // Updating a list - only listName and listIsArchived, the rest should be handled by it's respective endpoints 
-router.patch('/:listId',getList ,async (req,res)=>{
+router.patch('/:listId',getList(true) ,async (req,res)=>{
   if(req.body.shoppingListName != null){
     res.list.shoppingListName = req.body.shoppingListName
   }
@@ -98,7 +98,7 @@ router.patch('/:listId',getList ,async (req,res)=>{
 })
 
 // Deleting a list
- router.delete('/:listId',getList ,async (req,res)=>{
+ router.delete('/:listId',authenticateToken,getList(true) ,async (req,res)=>{
 
   try{
     await res.list.deleteOne()
@@ -109,7 +109,10 @@ router.patch('/:listId',getList ,async (req,res)=>{
   
 })
 
-async function getList(req, res, next){
+// make checkUser and getList into the same function
+
+function getList(isOwner){
+return async(req, res, next) => {
  let list
  try{
   list = await List.findById(req.params.listId)
@@ -120,8 +123,35 @@ async function getList(req, res, next){
  }catch (err){
     return res.status(500).json({message: err.message})
  } 
- res.list = list
- next()
-}
+  if(isOwner == true){
+    console.log("got to the if statement")
+    list.shoppingListMembers.forEach(member => {
+      if((member.shoppingListMemberName == req.user) && (member.shoppingListMemberIsOwner == true)){
+        console.log("found owner!")
+        res.list = list
+        next()
+      }else{console.log("go next, member.shoppingListMemberName",member.shoppingListMemberName, member.shoppingListMemberIsOwner, req.user)}})  
+  }else{
+    list.shoppingListMembers.forEach(member => {
+      if(member.shoppingListMemberName == req.user){
+        res.list = list
+        next()
+      }})
+  }
+  // doesnt have to be here sice authToken handles authorization for me
+  return res.status(401).json({message: "Unauthorized"})
+ }
+} 
+
+// function checkUser(isOwner)
+// return(req, res, next) => {
+//   if(isOwner == true){
+//     // in request, compare if req.user = isOwner in shoppingListMembers 
+//     list = 
+//     //iterate through shopping list with id from req.params.listId
+//   }else{
+//     //in requrest, compare if req.user is in shoppingListMembers 
+//   }
+// }
 
 module.exports = router

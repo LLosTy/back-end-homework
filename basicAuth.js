@@ -21,7 +21,8 @@ function authRole(role) {
 }
 
 function authenticateToken(req, res, next){
-  console.log("start of authenticateToken",req.body.username)
+  // console.log(req)
+  console.log("start of authenticateToken")
   const authHeader = req.headers['authorization']
   const token = authHeader && authHeader.split(' ')[1]
   if (token == null) return res.sendStatus(401)
