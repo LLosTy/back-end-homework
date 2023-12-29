@@ -124,22 +124,42 @@ return async(req, res, next) => {
     return res.status(500).json({message: err.message})
  } 
   if(isOwner == true){
-    console.log("got to the if statement")
-    list.shoppingListMembers.forEach(member => {
-      if((member.shoppingListMemberName == req.user) && (member.shoppingListMemberIsOwner == true)){
-        console.log("found owner!")
+  
+      if (list.shoppingListMembers.find((member) => member.shoppingListMemberName == req.user && member.shoppingListMemberIsOwner == true)){
+        console.log("found Owner")
         res.list = list
         next()
-      }else{console.log("go next, member.shoppingListMemberName",member.shoppingListMemberName, member.shoppingListMemberIsOwner, req.user)}})  
-  }else{
-    list.shoppingListMembers.forEach(member => {
-      if(member.shoppingListMemberName == req.user){
-        res.list = list
-        next()
-      }})
-  }
-  // doesnt have to be here sice authToken handles authorization for me
+      }else{
+
   return res.status(401).json({message: "Unauthorized"})
+      }
+  //   list.shoppingListMembers.forEach(member => {
+  //     if((member.shoppingListMemberName == req.user) && (member.shoppingListMemberIsOwner == true)){
+  //       console.log("found owner!")
+  //       res.list = list
+  //       next()
+  //     }else{console.log("go next, member.shoppingListMemberName",member.shoppingListMemberName, member.shoppingListMemberIsOwner, req.user)}})  
+  // }else{
+  //   list.shoppingListMembers.forEach(member => {
+  //     if(member.shoppingListMemberName == req.user){
+  //       res.list = list
+  //       next()
+  //     }})
+      // list.shoppingListMembers.filter((member) => member.shoppingListMemberName == req.user && member.shoppingListMemberIsOwner == true)
+  // }
+  // doesnt have to be here sice authToken handles authorization for me
+  // return res.status(401).json({message: "Unauthorized"})
+  }   
+  if(isOwner == false){
+   if (list.shoppingListMembers.find((member) => member.shoppingListMemberName == req.user)){
+      console.log("found Owner")
+    console.log("found member")
+    res.list = list
+    next()
+   }else{
+    return res.status(401).json({message: "Unauthorized"})
+   }
+  }
  }
 } 
 
