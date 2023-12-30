@@ -9,6 +9,7 @@ module.exports = {
     { id: 1, name: 'Kyle', role: ROLE.ADMIN },
     { id: 2, name: 'Sally', role: ROLE.BASIC },
     { id: 3, name: 'Joe', role: ROLE.BASIC }
+    { id: 4, name: 'Pookie <3', role: ROLE.POOKIE }
   ],
   projects: [
     { id: 1, name: "Kyle's jjProject", userId: 1 },
