@@ -6,12 +6,14 @@ const { ROLE, users, projects } = require('./data')
 const { authUser, authRole,authenticateToken } = require('./basicAuth')
 const projectRouter = require('./routes/projects')
 const listsRouter = require('./routes/lists')
+const usersRouter = require('./routes/users')
 const jwt = require('jsonwebtoken')
 
 app.use(express.json())
 app.use(setUser)
 app.use('/projects', projectRouter)
 app.use('/lists', listsRouter)
+app.use('/users', usersRouter)
 
 
 const mongoose = require('mongoose')
