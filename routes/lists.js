@@ -4,12 +4,13 @@ const router = express.Router()
 const { projects } = require('../data')
 const { authUser,authenticateToken } = require('../basicAuth')
 
+// db.lists.find({"shoppingListMembers.shoppingListMemberName":"User1"})
 
 // Getting all lists
-router.get('/' ,authenticateToken,getList(false), async (req,res)=>{
+router.get('/' ,authenticateToken, async (req,res)=>{
   try {
 
-    const lists = await List.find()
+    const lists = await List.find({"shoppingListMembers.shoppingListMemberName":req.user })
     res.json(lists)
   } catch (err){
     res.status(500).json({ message: err.message})
