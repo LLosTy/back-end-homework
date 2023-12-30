@@ -16,18 +16,26 @@ router.get('/',async (req, res) => {
 })
 // add checking for unique name functionality
 router.post('/', async(req,res)=> {
-    try{
-        const hashedPassword = await bcrypt.hash(req.body.password, 10)
-        console.log(hashedPassword)
-        const user = new User({
-            username: req.body.username,
-            password: hashedPassword
-        })
-        const newUser = await user.save()
-        console.log(newUser, req.body.username)
-        res.status(201).send(newUser)
-    }catch(err){
-        res.status(500).send({message: err.message})
+    // const exists = await User.findOne({"username": req.body.username})
+    // console.log("exists:",exists)
+    if(await User.findOne({"username":req.body.username})){
+        // console.log("Already exists")
+        res.status(403).json({message:"User with this username already exists"})
+    }else{
+        console.log("Does not exist, may proceed")
+        try{
+            const hashedPassword = await bcrypt.hash(req.body.password, 10)
+            // console.log(hashedPassword)
+            const user = new User({
+                username: req.body.username,
+                password: hashedPassword
+            })
+            const newUser = await user.save()
+            // console.log(newUser, req.body.username)
+            res.status(201).send(newUser)
+        }catch(err){
+            res.status(500).send({message: err.message})
+        }
     }
 })
 
