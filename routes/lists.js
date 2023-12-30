@@ -80,7 +80,7 @@ router.post('/',authenticateToken, async (req, res) => {
 
 
 // Updating a list - only listName and listIsArchived, the rest should be handled by it's respective endpoints 
-router.patch('/:listId',getList(true) ,async (req,res)=>{
+router.patch('/:listId',authenticateToken, getList(true) ,async (req,res)=>{
   if(req.body.shoppingListName != null){
     res.list.shoppingListName = req.body.shoppingListName
   }
@@ -152,8 +152,8 @@ return async(req, res, next) => {
   }   
   if(isOwner == false){
    if (list.shoppingListMembers.find((member) => member.shoppingListMemberName == req.user)){
-      console.log("found Owner")
-    console.log("found member")
+      // console.log("found Owner")
+    // console.log("found member")
     res.list = list
     next()
    }else{
