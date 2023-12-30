@@ -117,7 +117,7 @@ return async(req, res, next) => {
  let list
  try{
   list = await List.findById(req.params.listId)
-  console.log("list:",list, "req.params.id", req.params.listId)
+  // console.log("list:",list, "req.params.id", req.params.listId)
   if (list == null){
     return res.status(400).json({message: "Cannot find list"})
   }
@@ -152,6 +152,7 @@ return async(req, res, next) => {
   // return res.status(401).json({message: "Unauthorized"})
   }   
   if(isOwner == false){
+  //  console.log(list.shoppingListMembers.find((member) => member.shoppingListMemberName == req.user))
    if (list.shoppingListMembers.find((member) => member.shoppingListMemberName == req.user)){
       // console.log("found Owner")
     // console.log("found member")

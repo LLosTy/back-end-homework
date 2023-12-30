@@ -42,21 +42,22 @@ router.post('/', async(req,res)=> {
 router.post('/login',async (req,res)=>{
 //    const user = User.find(user => user.username === req.body.username)
    const user = await User.findOne({"username": req.body.username})
-   console.log(user.username)
-   if(user==false){
+//    console.log(user.username)
+   if(user==null){
     res.status(400).json({message:"Cannot find user"})
-   }
-   try{
-        if (await bcrypt.compare(req.body.password, user.password)){
-            // res.send('Success')
-            // const username = req.body.username
-            const accessToken = jwt.sign(user.username, process.env.ACCESS_TOKEN_SECRET)
-            res.json({ accessToken: accessToken})
-        }else{
-            res.send('Not allowed')
-        }
-   }catch(err){
-        res.status(500).send({message: err.message})
+   }else{
+    try{
+            if (await bcrypt.compare(req.body.password, user.password)){
+                // res.send('Success')
+                // const username = req.body.username
+                const accessToken = jwt.sign(user.username, process.env.ACCESS_TOKEN_SECRET)
+                res.json({message:"Login successfull", accessToken: accessToken})
+            }else{
+                res.send('Not allowed')
+            }
+    }catch(err){
+            res.status(500).send({message: err.message})
+    }
    }
 })
 module.exports = router
