@@ -22,7 +22,7 @@ router.post('/', async(req,res)=> {
         // console.log("Already exists")
         res.status(403).json({message:"User with this username already exists"})
     }else{
-        console.log("Does not exist, may proceed")
+        // console.log("Does not exist, may proceed")
         try{
             const hashedPassword = await bcrypt.hash(req.body.password, 10)
             // console.log(hashedPassword)
@@ -44,7 +44,7 @@ router.post('/login',async (req,res)=>{
    const user = await User.findOne({"username": req.body.username})
 //    console.log(user.username)
    if(user==null){
-    res.status(400).json({message:"Cannot find user"})
+    res.status(404).json({message:"Cannot find user"})
    }else{
     try{
             if (await bcrypt.compare(req.body.password, user.password)){
@@ -53,7 +53,7 @@ router.post('/login',async (req,res)=>{
                 const accessToken = jwt.sign(user.username, process.env.ACCESS_TOKEN_SECRET)
                 res.json({message:"Login successfull", accessToken: accessToken})
             }else{
-                res.send('Not allowed')
+                res.status(401).json({message: "Invalid credentials"})
             }
     }catch(err){
             res.status(500).send({message: err.message})

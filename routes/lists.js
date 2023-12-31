@@ -24,7 +24,7 @@ router.get('/:listId' ,authenticateToken,getList(false),async (req,res)=>{
 
 // POST = CREATE a list
 router.post('/',authenticateToken, async (req, res) => {
-  console.log(req.user)
+  // console.log(req.user)
   try {
     // Create a new List object
     const list = new List({
@@ -32,44 +32,44 @@ router.post('/',authenticateToken, async (req, res) => {
       shoppingListIsArchived: req.body.shoppingListIsArchived
     });
 
-    let ownerFound = false;
+    // let ownerFound = false;
 
-    // Iterate through shoppingListItems in the request body
-    if (req.body.shoppingListItems && Array.isArray(req.body.shoppingListItems)) {
-      req.body.shoppingListItems.forEach(item => {
-        list.shoppingListItems.push({
-          shoppingListItemName: item.shoppingListItemName,
-          shoppingListItemArchivedState: item.shoppingListItemArchivedState
-        });
-      });
-    }
+    // // Iterate through shoppingListItems in the request body
+    // if (req.body.shoppingListItems && Array.isArray(req.body.shoppingListItems)) {
+    //   req.body.shoppingListItems.forEach(item => {
+    //     list.shoppingListItems.push({
+    //       shoppingListItemName: item.shoppingListItemName,
+    //       shoppingListItemArchivedState: item.shoppingListItemArchivedState
+    //     });
+    //   });
+    // }
 
-    // Iterate through shoppingListMembers in the request body
-    if (req.body.shoppingListMembers && Array.isArray(req.body.shoppingListMembers)) {
-      req.body.shoppingListMembers.forEach(member => {
-        const newMember = {
-          shoppingListMemberName: member.shoppingListMemberName,
-          shoppingListMemberIsOwner: member.shoppingListMemberIsOwner
-        };
+    // // Iterate through shoppingListMembers in the request body
+    // if (req.body.shoppingListMembers && Array.isArray(req.body.shoppingListMembers)) {
+    //   req.body.shoppingListMembers.forEach(member => {
+    //     const newMember = {
+    //       shoppingListMemberName: member.shoppingListMemberName,
+    //       shoppingListMemberIsOwner: member.shoppingListMemberIsOwner
+    //     };
 
-        if (newMember.shoppingListMemberIsOwner) {
-          // Check if an owner already exists
-          if (ownerFound) {
-            throw new Error('Only one member can be the owner.');
-          }
-          ownerFound = true;
-        }
+    //     if (newMember.shoppingListMemberIsOwner) {
+    //       // Check if an owner already exists
+    //       if (ownerFound) {
+    //         throw new Error('Only one member can be the owner.');
+    //       }
+    //       ownerFound = true;
+    //     }
 
-        list.shoppingListMembers.push(newMember);
-      });
-    }
-    else{
+    //     list.shoppingListMembers.push(newMember);
+    //   });
+    // }
+    // else{
       const newMember = {
         shoppingListMemberName: req.user,
         shoppingListMemberIsOwner: true
       }
       list.shoppingListMembers.push(newMember)
-    }
+    // }
 
     // Save the list to the database
     const newList = await list.save();
@@ -88,10 +88,16 @@ router.patch('/:listId',authenticateToken, getList(true) ,async (req,res)=>{
 
   if(req.body.shoppingListIsArchived != null){
     res.list.shoppingListIsArchived = req.body.shoppingListIsArchived
+  
   }
+  // const listChanges =  List.updateMany({
+  //   shoppingListName: req.body.shoppingListName,
+  //   shoppingListIsArchived: req.body.shoppingListIsArchived
+  // });
 
   try{
     const updatedList = await res.list.save()
+    // await listChanges.save()
     res.json(updatedList)
   } catch(err){
     res.status(400).json({ message: err.mesage })
@@ -119,7 +125,7 @@ return async(req, res, next) => {
   list = await List.findById(req.params.listId)
   // console.log("list:",list, "req.params.id", req.params.listId)
   if (list == null){
-    return res.status(400).json({message: "Cannot find list"})
+    return res.status(404).json({message: "Cannot find list"})
   }
  }catch (err){
     return res.status(500).json({message: err.message})
@@ -127,12 +133,11 @@ return async(req, res, next) => {
   if(isOwner == true){
   
       if (list.shoppingListMembers.find((member) => member.shoppingListMemberName == req.user && member.shoppingListMemberIsOwner == true)){
-        console.log("found Owner")
+        // console.log("found Owner")
         res.list = list
         next()
       }else{
-
-  return res.status(401).json({message: "Unauthorized"})
+        return res.status(401).json({message: "Unauthorized"})
       }
   //   list.shoppingListMembers.forEach(member => {
   //     if((member.shoppingListMemberName == req.user) && (member.shoppingListMemberIsOwner == true)){
@@ -159,7 +164,7 @@ return async(req, res, next) => {
     res.list = list
     next()
    }else{
-    return res.status(401).json({message: "Unauthorized"})
+      return res.status(401).json({message: "Unauthorized"})
    }
   }
  }
