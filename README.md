@@ -1,3 +1,11 @@
+# How to run the app
+
+ ### In terminal, run:
+ 1. npm i
+ 2. npm run devStart
+ 3. in a separate terminal run mongosh
+
+
 # Insomnia Guide
 
 In the Insomnia collection, the requests are organized chronologically from top to bottom.
