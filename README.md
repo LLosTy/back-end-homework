@@ -1,9 +1,9 @@
 # How to run the app
 
  ### In terminal, run:
- 1. npm i
- 2. npm run devStart
- 3. in a separate terminal run mongosh
+ 1. `npm i`
+ 2. `npm run devStart`
+ 3. In a separate terminal run `mongosh`
 
 
 # Insomnia Guide
