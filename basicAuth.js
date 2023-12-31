@@ -1,24 +1,24 @@
 const jwt = require('jsonwebtoken')
 
-function authUser(req, res, next) {
-  if (req.user == null) {
-    res.status(403)
-    return res.send('You need to sign in')
-  }
+// function authUser(req, res, next) {
+//   if (req.user == null) {
+//     res.status(403)
+//     return res.send('You need to sign in')
+//   }
 
-  next()
-}
+//   next()
+// }
 
-function authRole(role) {
-  return (req, res, next) => {
-    if (req.user.role !== role) {
-      res.status(401)
-      return res.send('Not allowed')
-    }
+// function authRole(role) {
+//   return (req, res, next) => {
+//     if (req.user.role !== role) {
+//       res.status(401)
+//       return res.send('Not allowed')
+//     }
 
-    next()
-  }
-}
+//     next()
+//   }
+// }
 
 function authenticateToken(req, res, next){
   // console.log(req)
@@ -35,7 +35,5 @@ function authenticateToken(req, res, next){
   })}
 
 module.exports = {
-  authUser,
-  authRole,
   authenticateToken
 }

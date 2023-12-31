@@ -1,8 +1,8 @@
 const List = require('../models/list')
 const express = require('express')
 const router = express.Router()
-const { projects } = require('../data')
-const { authUser,authenticateToken } = require('../basicAuth')
+// const { projects } = require('../data')
+const { authenticateToken } = require('../basicAuth')
 
 // db.lists.find({"shoppingListMembers.shoppingListMemberName":"User1"})
 
