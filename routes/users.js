@@ -14,24 +14,17 @@ router.get('/',async (req, res) => {
     }
 
 })
-// add checking for unique name functionality
 router.post('/', async(req,res)=> {
-    // const exists = await User.findOne({"username": req.body.username})
-    // console.log("exists:",exists)
     if(await User.findOne({"username":req.body.username})){
-        // console.log("Already exists")
         res.status(403).json({message:"User with this username already exists"})
     }else{
-        // console.log("Does not exist, may proceed")
         try{
             const hashedPassword = await bcrypt.hash(req.body.password, 10)
-            // console.log(hashedPassword)
             const user = new User({
                 username: req.body.username,
                 password: hashedPassword
             })
             const newUser = await user.save()
-            // console.log(newUser, req.body.username)
             res.status(201).send(newUser)
         }catch(err){
             res.status(500).send({message: err.message})
@@ -40,16 +33,12 @@ router.post('/', async(req,res)=> {
 })
 
 router.post('/login',async (req,res)=>{
-//    const user = User.find(user => user.username === req.body.username)
    const user = await User.findOne({"username": req.body.username})
-//    console.log(user.username)
    if(user==null){
     res.status(404).json({message:"Cannot find user"})
    }else{
     try{
             if (await bcrypt.compare(req.body.password, user.password)){
-                // res.send('Success')
-                // const username = req.body.username
                 const accessToken = jwt.sign(user.username, process.env.ACCESS_TOKEN_SECRET)
                 res.json({message:"Login successfull", accessToken: accessToken})
             }else{
